@@ -19,6 +19,7 @@ async def init() -> None:
 
 
 @app.get("/api/solutions/user/{user_id}/", response_model=PastComputations)
+@app.get("/api/solutions/user/{user_id}", include_in_schema=False, response_model=PastComputations)
 def get_computations(user_id: str):
     with Session() as session:
         solutions = session.query(Solution).filter_by(user_id=user_id)
@@ -27,6 +28,7 @@ def get_computations(user_id: str):
 
 
 @app.get("/api/solutions/computation/{computation_id}/")
+@app.get("/api/solutions/computation/{computation_id}", include_in_schema=False)
 def get_solution(computation_id: str):
     with Session() as session:
         solution = session.query(Solution).filter_by(computation_id=computation_id).first()
@@ -34,8 +36,8 @@ def get_solution(computation_id: str):
     return {"url": solution.url}
 
 
-
 @app.post("/api/solutions/{computation_id}/")
+@app.post("/api/solutions/{computation_id}", include_in_schema=False)
 def add_solution(solution_request: SolutionRequest):
 
     url = drop_file(solution_request.body)
