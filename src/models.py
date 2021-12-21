@@ -11,3 +11,8 @@ class SolutionRequest(BaseModel):
 
 class PastComputations(BaseModel):
     computation_ids: List[str]
+
+
+class SignedUrl(BaseModel):
+    fileUUID: str
+    url: str

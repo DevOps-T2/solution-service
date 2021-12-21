@@ -9,6 +9,7 @@ from .file_storage import drop_file
 
 
 app = FastAPI()
+logging.basicConfig(level=logging.INFO)
 
 
 @app.on_event("startup")
@@ -36,14 +37,15 @@ def get_solution(computation_id: str):
     return {"url": solution.url}
 
 
-@app.post("/api/solutions/{computation_id}/")
-@app.post("/api/solutions/{computation_id}", include_in_schema=False)
+@app.post("/api/solutions/")
+@app.post("/api/solutions", include_in_schema=False)
 def add_solution(solution_request: SolutionRequest):
 
-    url = drop_file(solution_request.body)
+    url, file_uuid = drop_file(solution_request.body)
     solution = Solution(user_id=solution_request.user_id,
                         computation_id=solution_request.computation_id,
-                        url=url)
+                        url=url,
+                        file_uuid=file_uuid)
 
     with Session() as session:
         session.add(solution)
