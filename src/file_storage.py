@@ -25,7 +25,7 @@ def drop_file(body: str, user_id: str, computation_id: str):
 
     file_name = computation_id + ".txt"
     data = File(userID=user_id, fileUUID=signed_url.fileUUID, fileName=file_name)
-    response = requests.post("http://"+minizinc_data_name+"/api/minizinc/upload", headers=headers, json=data.json())
+    response = requests.post("http://"+minizinc_data_name+"/api/minizinc/upload", headers=headers, json=data.dict())
     if response.status_code != 200:
         logging.error("minizinc-data replied {}: {}".format(response.status_code, response.text))
 
