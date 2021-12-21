@@ -37,8 +37,8 @@ def get_solution(computation_id: str):
     return {"url": solution.url}
 
 
-@app.post("/api/solutions/")
-@app.post("/api/solutions", include_in_schema=False)
+@app.post("/api/solutions/upload/")
+@app.post("/api/solutions/upload", include_in_schema=False)
 def add_solution(solution_request: SolutionRequest):
 
     url, file_uuid = drop_file(solution_request.body)
