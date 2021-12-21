@@ -16,3 +16,9 @@ class PastComputations(BaseModel):
 class SignedUrl(BaseModel):
     fileUUID: str
     url: str
+
+
+class File(BaseModel):
+    userID: str
+    fileName: str
+    fileUUID: str

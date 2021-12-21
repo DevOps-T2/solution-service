@@ -34,18 +34,18 @@ def get_solution(computation_id: str):
     with Session() as session:
         solution = session.query(Solution).filter_by(computation_id=computation_id).first()
 
-    return {"url": solution.url}
+    return {"filename": solution.file_name}
 
 
 @app.post("/api/solutions/upload/")
 @app.post("/api/solutions/upload", include_in_schema=False)
 def add_solution(solution_request: SolutionRequest):
 
-    url, file_uuid = drop_file(solution_request.body)
+    file_uuid, file_name = drop_file(solution_request.body, solution_request.user_id, solution_request.computation_id)
     solution = Solution(user_id=solution_request.user_id,
                         computation_id=solution_request.computation_id,
-                        url=url,
-                        file_uuid=file_uuid)
+                        file_uuid=file_uuid,
+                        file_name=file_name)
 
     with Session() as session:
         session.add(solution)

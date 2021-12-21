@@ -10,8 +10,8 @@ class Solution(Base):
 
     user_id = Column(String, primary_key=True)
     computation_id = Column(String, primary_key=True)
-    url = Column(String)
     file_uuid = Column(String)
+    file_name = Column(String)
 
     def __repr__(self):
         return "<Solution(user_id='{}', solution_id='{}', url='{}')>".format(
