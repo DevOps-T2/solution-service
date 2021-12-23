@@ -3,7 +3,7 @@ import logging
 from fastapi import FastAPI
 from sqlalchemy import create_engine
 
-from .models import SolutionRequest, PastComputations
+from .models import SolutionInformation, SolutionInformationInput, PastComputations
 from .database import Session, Base, Solution
 from .file_storage import drop_file
 
@@ -25,28 +25,42 @@ def get_computations(user_id: str):
     with Session() as session:
         solutions = session.query(Solution).filter_by(user_id=user_id)
 
-    return PastComputations(computation_ids=[s.computation_id for s in solutions])
+    solution_information = list()
+    for solution in solutions:
+        solution_information.append(SolutionInformation(computation_id=solution.computation_id,
+                                                        user_id=solution.user_id,
+                                                        status=solution.status,
+                                                        reason=solution.reason,
+                                                        solver=solution.solver,
+                                                        file_uuid=solution.file_uuid))
 
-
-@app.get("/api/solutions/computation/{computation_id}/")
-@app.get("/api/solutions/computation/{computation_id}", include_in_schema=False)
-def get_solution(computation_id: str):
-    with Session() as session:
-        solution = session.query(Solution).filter_by(computation_id=computation_id).first()
-
-    return {"filename": solution.file_name}
+    return PastComputations(computations=solution_information)
 
 
 @app.post("/api/solutions/upload/")
 @app.post("/api/solutions/upload", include_in_schema=False)
-def add_solution(solution_request: SolutionRequest):
+def add_solution(solution_request: SolutionInformationInput):
 
-    file_uuid, file_name = drop_file(solution_request.body, solution_request.user_id, solution_request.computation_id)
-    solution = Solution(user_id=solution_request.user_id,
-                        computation_id=solution_request.computation_id,
-                        file_uuid=file_uuid,
-                        file_name=file_name)
+    if solution_request.body:
+        file_uuid = drop_file(solution_request.body, solution_request.user_id, solution_request.computation_id)
 
     with Session() as session:
-        session.add(solution)
+        solution = session.query(Solution).filter_by(computation_id=solution_request.computation_id).first()
+
+        if solution is None:
+            solution = Solution(user_id=solution_request.user_id, computation_id=solution_request.computation_id)
+            session.add(solution)
+
+        if file_uuid:
+            solution.file_uuid = file_uuid
+
+        if solution_request.status:
+            solution.status = solution_request.status
+
+        if solution_request.reason:
+            solution.reason = solution_request.reason
+
+        if solution_request.solver:
+            solution.solver = solution_request.solver
+
         session.commit()

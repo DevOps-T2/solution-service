@@ -1,16 +1,28 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
 
-class SolutionRequest(BaseModel):
+class SolutionInformationInput(BaseModel):
     user_id: str
     computation_id: str
-    body: str
+    status: Optional[str]
+    reason: Optional[str]
+    solver: Optional[str]
+    body: Optional[str]
+
+
+class SolutionInformation(BaseModel):
+    user_id: str
+    computation_id: str
+    status: str
+    reason: Optional[str]
+    solver: Optional[str]
+    file_uuid: Optional[str]
 
 
 class PastComputations(BaseModel):
-    computation_ids: List[str]
+    computations: List[SolutionInformation]
 
 
 class SignedUrl(BaseModel):

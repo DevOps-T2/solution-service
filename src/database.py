@@ -8,11 +8,13 @@ Session = sessionmaker()
 class Solution(Base):
     __tablename__: str = 'solutions'
 
-    user_id = Column(String, primary_key=True)
     computation_id = Column(String, primary_key=True)
+    user_id = Column(String, primary_key=True)
+    reason = Column(String)
+    status = Column(String)
+    solver = Column(String)
     file_uuid = Column(String)
-    file_name = Column(String)
 
     def __repr__(self):
-        return "<Solution(user_id='{}', solution_id='{}', url='{}')>".format(
-                                self.user_id, self.solution_id, self.url)
+        return "<Solution(user_id='{}', computation_id='{}')>".format(
+                                self.user_id, self.computation_id)
