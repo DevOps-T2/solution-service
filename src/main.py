@@ -37,7 +37,7 @@ def get_computations(user_id: str):
     return PastComputations(computations=solution_information)
 
 
-@app.post("/api/solutions/upload/")
+@app.post("/api/solutions/upload/", include_in_schema=False)
 @app.post("/api/solutions/upload", include_in_schema=False)
 def add_solution(solution_request: SolutionInformationInput):
 
