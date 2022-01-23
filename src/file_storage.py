@@ -25,7 +25,7 @@ def drop_file(body: str, user_id: str, computation_id: str):
 
     # upload solution
     try:
-        response = requests.put(signed_url.url, data=body)
+        response = requests.put(signed_url.url, data=body, headers={'Content-Type': 'text/plain'})
     except requests.exceptions.ConnectionError:
         logging.error("Couldn't connect to {}".format(signed_url.url))
         return None
